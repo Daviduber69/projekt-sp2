@@ -7,13 +7,13 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Game {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
     String name;
     String genre;
     String developer;
     int price;
-    @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
 
     public Game(){}
 
