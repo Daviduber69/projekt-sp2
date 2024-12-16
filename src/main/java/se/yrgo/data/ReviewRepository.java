@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    Review findByGame (Game game);
+    List<Review> findByGame(Game game);
 
 }
