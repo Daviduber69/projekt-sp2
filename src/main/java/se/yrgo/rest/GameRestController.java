@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import se.yrgo.data.GameRepository;
 import se.yrgo.domain.Game;
 
@@ -24,5 +25,10 @@ public class GameRestController {
     public ResponseEntity createNewGame(@RequestBody Game game){
         gameRepository.save(game);
         return new ResponseEntity<>(game, HttpStatus.CREATED);
+    }
+    @RequestMapping(value="/game/{name}", method = RequestMethod.GET)
+    public ResponseEntity gameByName(@PathVariable("name") String name){
+        Game game = gameRepository.findByName(name);
+        return ResponseEntity.ok(game);
     }
 }
