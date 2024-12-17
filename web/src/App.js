@@ -33,9 +33,9 @@ const App = () => {
                     </div>
                 }
                 />
-                <Route path="/game/:name" element={<GameDetails />}></Route>
-                <Route path="/game/:name/write-review" element={<WriteReview />}></Route> 
-                <Route path="/game/:name/review/:reviewId" element={<ReviewDetails />} />
+                <Route path="/game/:name" element={<GameDetails/>}></Route>
+                <Route path="/game/:name/write-review" element={<WriteReview/>}></Route>
+                <Route path="/game/:name/review/:reviewId" element={<ReviewDetails/>}/>
             </Routes>
         </BrowserRouter>
     );
@@ -70,36 +70,38 @@ const GameDetails = () => {
     if (!game) {
         return <h2>Loading...</h2>;
     }
-    return(
+    return (
         <>
-        <h1>{game.name}</h1>
-        <p> {game.genre}</p>
-            <p>{game.developer}</p>
+            <h1>{game.name}</h1>
+            <p> {game.genre}</p>
+            <p>Publisher: {game.publisher.name}, {game.publisher.country}</p>
             <p>${game.price}</p>
-            <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link> 
-        
+            <Link to={`/game/${game.name}/write-review`}>
+                <button>Write Review</button>
+            </Link>
+
             <h2>Reviews</h2>
-        {reviews.length === 0 ? (
-            <p>No reviews yet for this game.</p>
-        ) : (
-            <ul>
-                {reviews.map((review) => (
-                    <li key={review.id} style={{marginBottom: '10px'}}>
-                        <Link to={`/game/${name}/review/${review.id}`}>
-                            <strong>{review.reviewerName}</strong> - 
-                            {Array(review.rating).fill('★').join('')} 
-                            ({review.rating}/5)
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        )}
+            {reviews.length === 0 ? (
+                <p>No reviews yet for this game.</p>
+            ) : (
+                <ul>
+                    {reviews.map((review) => (
+                        <li key={review.id} style={{marginBottom: '10px'}}>
+                            <Link to={`/game/${name}/review/${review.id}`}>
+                                <strong>{review.reviewerName}</strong> -
+                                {Array(review.rating).fill('★').join('')}
+                                ({review.rating}/5)
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </>
     )
 }
 
 const WriteReview = () => {
-    const { name } = useParams();
+    const {name} = useParams();
     const [rating, setRating] = useState(0);
     const [reviewContent, setReviewContent] = useState('');
     const [error, setError] = useState(null);
@@ -112,30 +114,30 @@ const WriteReview = () => {
             reviewContent: reviewContent,
             rating: rating
         })
-        .then(() => {
-            navigate(`/game/${name}`);
-        })
-        .catch(error => {
-            console.error("Could not submit review!", error);
-            setError("Could not submit review!");
-        });
+            .then(() => {
+                navigate(`/game/${name}`);
+            })
+            .catch(error => {
+                console.error("Could not submit review!", error);
+                setError("Could not submit review!");
+            });
     };
 
     return (
         <div>
             <h1>Write a Review for {name}</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{color: 'red'}}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <h3>Rating</h3>
                     {[1, 2, 3, 4, 5].map(star => (
-                        <span 
-                            key={star} 
-                            onClick={() => setRating(star)} 
-                            style={{ 
-                                cursor: 'pointer', 
-                                color: star <= rating ? 'gold' : 'gray', 
-                                fontSize: '2rem' 
+                        <span
+                            key={star}
+                            onClick={() => setRating(star)}
+                            style={{
+                                cursor: 'pointer',
+                                color: star <= rating ? 'gold' : 'gray',
+                                fontSize: '2rem'
                             }}
                         >
                             ★
@@ -144,11 +146,11 @@ const WriteReview = () => {
                 </div>
                 <div>
                     <h3>Review</h3>
-                    <textarea 
-                        value={reviewContent} 
-                        onChange={(e) => setReviewContent(e.target.value)} 
-                        placeholder="Write your review here..." 
-                        rows="5" 
+                    <textarea
+                        value={reviewContent}
+                        onChange={(e) => setReviewContent(e.target.value)}
+                        placeholder="Write your review here..."
+                        rows="5"
                         cols="40"
                     ></textarea>
                 </div>
@@ -159,7 +161,7 @@ const WriteReview = () => {
 }
 
 const ReviewDetails = () => {
-    const { name, reviewId } = useParams();
+    const {name, reviewId} = useParams();
     const [review, setReview] = useState(null);
     const [error, setError] = useState(null);
 

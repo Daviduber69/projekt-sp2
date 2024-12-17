@@ -6,9 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import se.yrgo.data.GameRepository;
-import se.yrgo.data.ReviewRepository;
+import se.yrgo.data.PublisherRepository;
 import se.yrgo.domain.Game;
-import se.yrgo.domain.Review;
+import se.yrgo.domain.Publisher;
+
 
 import java.util.List;
 
@@ -17,9 +18,8 @@ import java.util.List;
 public class GameRestController {
     @Autowired
     private GameRepository gameRepository;
-
     @Autowired
-    private ReviewRepository reviewRepository;
+    private PublisherRepository publisherRepository;
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public GameList allGames(){
@@ -38,34 +38,14 @@ public class GameRestController {
         Game game = gameRepository.findByName(name);
         return ResponseEntity.ok(game);
     }
-
-    @RequestMapping(value="/game/{name}/reviews", method = RequestMethod.POST)
-    public ResponseEntity<?> createReview(@PathVariable("name") String name, @RequestBody Review review){
-        Game game = gameRepository.findByName(name);
-        if (game == null) {
-            return new ResponseEntity<>("Game not found", HttpStatus.NOT_FOUND);
-        }
-        review.setGame(game);
-        reviewRepository.save(review);
-        return new ResponseEntity<>(review, HttpStatus.CREATED);
+    @RequestMapping(value = "/publisher", method = RequestMethod.POST)
+    public ResponseEntity createPublisher(@RequestBody Publisher publisher){
+        publisherRepository.save(publisher);
+        return new ResponseEntity<>(publisher, HttpStatus.CREATED);
     }
-
-    @RequestMapping(value="/game/{name}/reviews", method = RequestMethod.GET)
-    public ResponseEntity<?> getReviewsForGame(@PathVariable("name") String name){
-        Game game = gameRepository.findByName(name);
-        if (game == null) {
-            return new ResponseEntity<>("Game not found", HttpStatus.NOT_FOUND);
-        }
-        List<Review> reviews = reviewRepository.findByGame(game);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    @RequestMapping(value = "/publisher", method = RequestMethod.GET)
+    public PublisherList allPublishers(){
+        List<Publisher> publishers = publisherRepository.findAll();
+        return new PublisherList(publishers);
     }
-
-    @RequestMapping(value="/game/{name}/reviews/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getReviewById(@PathVariable("name") String name, @PathVariable("id") Long id){
-    Review review = reviewRepository.findById(id).orElse(null);
-    if (review == null) {
-        return new ResponseEntity<>("Review not found", HttpStatus.NOT_FOUND);
-    }
-    return new ResponseEntity<>(review, HttpStatus.OK);
-}
 }
