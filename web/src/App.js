@@ -91,28 +91,7 @@ const GameDetails = () => {
             <p> {game.genre}</p>
             <p>Publisher: {game.publisher.name}, {game.publisher.country}</p>
             <p>${game.price}</p>
-<<<<<<< HEAD
-            <Link to={`/game/${game.name}/write-review`}>
-                <button>Write Review</button>
-            </Link>
 
-            <h2>Reviews</h2>
-            {reviews.length === 0 ? (
-                <p>No reviews yet for this game.</p>
-            ) : (
-                <ul>
-                    {reviews.map((review) => (
-                        <li key={review.id} style={{marginBottom: '10px'}}>
-                            <Link to={`/game/${name}/review/${review.id}`}>
-                                <strong>{review.reviewerName}</strong> -
-                                {Array(review.rating).fill('★').join('')}
-                                ({review.rating}/5)
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
-=======
             <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link>
 
         
@@ -135,7 +114,7 @@ const GameDetails = () => {
                 ))}
             </ul>
         )}
->>>>>>> jontebranch2
+
         </>
     )
 }
@@ -158,15 +137,7 @@ const WriteReview = () => {
             reviewerName: "Anonymous",
             reviewContent: reviewContent,
             rating: rating
-<<<<<<< HEAD
-        })
-            .then(() => {
-                navigate(`/game/${name}`);
-            })
-            .catch(error => {
-                console.error("Could not submit review!", error);
-                setError("Could not submit review!");
-=======
+
         };
 
         axios.post(url, payload)
@@ -176,7 +147,7 @@ const WriteReview = () => {
             })
             .catch((error) => {
                 console.error("Could not submit review!", error);
->>>>>>> jontebranch2
+
             });
     };
 
