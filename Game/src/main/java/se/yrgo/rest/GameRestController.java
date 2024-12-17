@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import se.yrgo.data.GameRepository;
+
 import se.yrgo.data.PublisherRepository;
 import se.yrgo.domain.Game;
 import se.yrgo.domain.Publisher;
+
+
+import se.yrgo.domain.Game;
 
 
 import java.util.List;
@@ -18,8 +21,10 @@ import java.util.List;
 public class GameRestController {
     @Autowired
     private GameRepository gameRepository;
+
     @Autowired
     private PublisherRepository publisherRepository;
+
 
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public GameList allGames(){
@@ -38,6 +43,7 @@ public class GameRestController {
         Game game = gameRepository.findByName(name);
         return ResponseEntity.ok(game);
     }
+
     @RequestMapping(value = "/publisher", method = RequestMethod.POST)
     public ResponseEntity createPublisher(@RequestBody Publisher publisher){
         publisherRepository.save(publisher);
@@ -48,4 +54,5 @@ public class GameRestController {
         List<Publisher> publishers = publisherRepository.findAll();
         return new PublisherList(publishers);
     }
+
 }
