@@ -1,10 +1,6 @@
 package se.yrgo.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Review {
@@ -12,21 +8,30 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
+    @Column(nullable = false)
     private String reviewerName;
+
+    @Column(nullable = false)
     private String reviewContent;
+
+    @Column(nullable = false)
     private int rating;
-    
-    @ManyToOne
-    private Game game;
+
+    @Column(name = "game_id", nullable = false)
+    private Integer gameId;
+
+    @Column(nullable = false)
+    private Integer voteCount = 0;
 
     public Review() {}
 
-    public Review(String reviewerName, String reviewContent, int rating, Game game) {
+    public Review(String reviewerName, String reviewContent, int rating, int gameId) {
         this.reviewerName = reviewerName;
         this.reviewContent = reviewContent;
         this.rating = rating;
-        this.game = game;
+        this.gameId = gameId;
+        this.voteCount = 0;
     }
 
     public Long getId() {
@@ -64,17 +69,27 @@ public class Review {
         this.rating = rating;
     }
 
-    public Game getGame() {
-        return game;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     @Override
     public String toString() {
-        return String.format("Reviewer: %s%nRating: %d/5%nReview: %s%nGame: %s%n", 
-                             reviewerName, rating, reviewContent, game.getName());
+        return String.format(
+                "Reviewer: %s%nRating: %d/5%nReview: %s%nGame: %d%nVoteCount: %d%n",
+                reviewerName, rating, reviewContent, gameId, voteCount
+        );
     }
 }

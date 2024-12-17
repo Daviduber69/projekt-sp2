@@ -56,13 +56,28 @@ const GameDetails = () => {
     }, [name]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/game/${name}/reviews`)
+        axios.get(`http://localhost:8081/game/${name}/reviews`)
             .then(response => setReviews(response.data))
             .catch(error => {
                 console.error("Could not fetch reviews!", error);
                 setError("Could not fetch reviews!");
             });
     }, [name]);
+
+    const handleVote = (reviewId, voteType) => {
+        axios.post(`http://localhost:8081/reviews/${reviewId}/vote`, { 
+            voterName: 'Anonymous', 
+            voteType: voteType 
+        })
+        .then(response => {
+            setReviews(prevReviews => prevReviews.map(review => 
+                review.id === reviewId ? {...review, voteCount: response.data.voteCount} : review
+            ));
+        })
+        .catch(error => {
+            console.error("Could not register vote!", error);
+        });
+    };
 
     if (error) {
         return <h2>{error}</h2>;
@@ -76,7 +91,8 @@ const GameDetails = () => {
         <p> {game.genre}</p>
             <p>{game.developer}</p>
             <p>${game.price}</p>
-            <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link> 
+            <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link>
+
         
             <h2>Reviews</h2>
         {reviews.length === 0 ? (
@@ -90,6 +106,9 @@ const GameDetails = () => {
                             {Array(review.rating).fill('★').join('')} 
                             ({review.rating}/5)
                         </Link>
+                        <button onClick={() => handleVote(review.id, 'UPVOTE')}>👍</button>
+                        <button onClick={() => handleVote(review.id, 'DOWNVOTE')}>👎</button>
+                        <span>Votes: {review.voteCount || 0}</span>
                     </li>
                 ))}
             </ul>
@@ -107,18 +126,25 @@ const WriteReview = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post(`http://localhost:8080/game/${name}/reviews`, {
+
+        if (!reviewContent || !rating) {
+            return;
+        }
+        const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews`;
+        const payload = {
             reviewerName: "Anonymous",
             reviewContent: reviewContent,
             rating: rating
-        })
-        .then(() => {
-            navigate(`/game/${name}`);
-        })
-        .catch(error => {
-            console.error("Could not submit review!", error);
-            setError("Could not submit review!");
-        });
+        };
+
+        axios.post(url, payload)
+            .then((response) => {
+                console.log('Review submitted successfully:', response.data);
+                navigate(`/game/${name}`);
+            })
+            .catch((error) => {
+                console.error("Could not submit review!", error);
+            });
     };
 
     return (
@@ -129,13 +155,13 @@ const WriteReview = () => {
                 <div>
                     <h3>Rating</h3>
                     {[1, 2, 3, 4, 5].map(star => (
-                        <span 
-                            key={star} 
-                            onClick={() => setRating(star)} 
-                            style={{ 
-                                cursor: 'pointer', 
-                                color: star <= rating ? 'gold' : 'gray', 
-                                fontSize: '2rem' 
+                        <span
+                            key={star}
+                            onClick={() => setRating(star)}
+                            style={{
+                                cursor: 'pointer',
+                                color: star <= rating ? 'gold' : 'gray',
+                                fontSize: '2rem'
                             }}
                         >
                             ★
@@ -144,11 +170,11 @@ const WriteReview = () => {
                 </div>
                 <div>
                     <h3>Review</h3>
-                    <textarea 
-                        value={reviewContent} 
-                        onChange={(e) => setReviewContent(e.target.value)} 
-                        placeholder="Write your review here..." 
-                        rows="5" 
+                    <textarea
+                        value={reviewContent}
+                        onChange={(e) => setReviewContent(e.target.value)}
+                        placeholder="Write your review here..."
+                        rows="5"
                         cols="40"
                     ></textarea>
                 </div>
@@ -158,19 +184,25 @@ const WriteReview = () => {
     );
 }
 
+
 const ReviewDetails = () => {
     const { name, reviewId } = useParams();
     const [review, setReview] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/game/${name}/reviews/${reviewId}`)
-            .then(response => setReview(response.data))
-            .catch(error => {
-                console.error("Could not fetch review details!", error);
-                setError("Review not found!");
-            });
-    }, [name, reviewId]);
+            const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews/${reviewId}`;
+            console.log(`Requesting Review from: ${url}`);
+
+            axios.get(url)
+                .then(response => {
+                    setReview(response.data);
+                })
+                .catch(error => {
+                    console.error("Could not fetch review details!", error);
+                    setError("Review not found!");
+                });
+        }, [name, reviewId]);
 
     if (error) {
         return <h2>{error}</h2>;
