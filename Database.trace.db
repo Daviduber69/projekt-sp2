@@ -1,0 +1,6 @@
+2024-12-18 15:21:24.813058+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from [*]user"; expected "identifier"; SQL statement:
+select * from user [42001-232]
+2024-12-18 15:21:29.190146+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found; SQL statement:
+select * from users [42102-232]
