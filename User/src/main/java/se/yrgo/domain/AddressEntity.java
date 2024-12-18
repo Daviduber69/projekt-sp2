@@ -14,8 +14,7 @@ public class AddressEntity {
     private String country;
 
     public AddressEntity() {}
-    public AddressEntity(Long id, String street, String city, String state, String postalCode, String country) {
-        this.id = id;
+    public AddressEntity( String street, String city, String state, String postalCode, String country) {
         this.street = street;
         this.city = city;
         this.state = state;

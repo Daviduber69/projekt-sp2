@@ -4,34 +4,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.yrgo.data.UserRepository;
 import se.yrgo.domain.UserEntity;
-import se.yrgo.service.UserService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserController(UserService userService) {this.userService = userService;}
+    public UserController(UserRepository userRepository) {this.userRepository = userRepository;}
 
-    @GetMapping
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
     public UserList getAllUsers() {
-        List<UserEntity> users = userService.getAllUsers();
+        List<UserEntity> users = userRepository.findAll();
         return new UserList(users);
     }
 
 
-    @PostMapping
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user) {
-        UserEntity createUser = userService.createUser(user);
+        UserEntity createUser = userRepository.save(user);
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
-    @DeleteMapping("/{id}")
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.POST)
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+        userRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

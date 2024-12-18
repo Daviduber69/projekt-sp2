@@ -26,9 +26,9 @@ const App = () => {
                         <h1>Games List</h1>
                         <ul>
                             {games.map(game => (
-                                <li key={game.id}>
-                                    <Link to={`/game/${game.name}`}> {game.name} </Link>
-                                </li>
+                                <div key={game.id}>
+                                    <Link to={`/game/${game.name}`}><h2> {game.name}</h2> </Link>
+                                </div>
                             ))}
                         </ul>
                     </div>
@@ -130,7 +130,18 @@ const GameDetails = () => {
 
 const WriteReview = () => {
     const {name} = useParams();
-    const [username, setUsername] = useState("");
+    const [user, setUser] = useState({
+        name: "",
+        email: "",
+    });
+
+    const [address, setAddress] = useState({
+        street: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+    });
     const [rating, setRating] = useState(0);
     const [reviewContent, setReviewContent] = useState('');
     const [error, setError] = useState(null);
@@ -144,15 +155,16 @@ const WriteReview = () => {
         if (!reviewContent || !rating) {
             return;
         }
+        const userUrl = 'http://localhost:8083/users';
+        const addressUrl = 'http://localhost:8083/address'
 
         const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews`;
         const payload = {
-            reviewerName: username,
+            reviewerName: user.name,
             reviewContent: reviewContent,
             rating: rating
 
         };
-
 
         axios.post(url, payload)
             .then((response) => {
@@ -163,23 +175,126 @@ const WriteReview = () => {
                 console.error("Could not submit review!", error);
 
             });
+
+        axios.post(userUrl, user)
+            .then((response) => {
+                console.log('User created:', response.data);
+            })
+            .catch((error) => {
+                console.error('Error saving user:', error);
+            });
+        axios.post(addressUrl, address)
+            .then((response) => {
+                console.log('Address saved:', response.data);
+            })
+            .catch((error) => {
+                console.error('Error saving address:', error);
+            })
     };
-    const handleName = (e) => {
-        setUsername(e.target.value);
-    };
+
+
+        const handleUserChange = (e) => {
+           setUser(prev =>( {
+                ...prev,
+               [e.target.name]: e.target.value
+           }))
+        };
+
+        const handleAddressChange = (e) => {
+           setAddress(prev =>({
+               ...prev,
+               [e.target.name]: e.target.value
+           }))
+        };
+
     return (
         <div>
-            <Link to={`/`}><button>Back to home</button></Link>
+            <Link to={`/`}>
+                <button>Back to home</button>
+            </Link>
             <h1>Write a Review for {name}</h1>
 
-            <a href="http://localhost:8083/website/users/create" target="_blank" rel="noopener noreferrer">
-                Register User:
-            </a>
-            <br/>
-            <input type="text" value={username} onChange={handleName} placeholder="Enter your name" />
+
 
             {error && <p style={{color: 'red'}}>{error}</p>}
             <form onSubmit={handleSubmit}>
+                <label>
+                    Name:
+                    <input
+                        name="name"
+                        type="text"
+                        value={user.name}
+                        onChange={handleUserChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    Email:
+                    <input
+                        name="email"
+                        type="email"
+                        value={user.email}
+                        onChange={handleUserChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    Street:
+                    <input
+                        name="street"
+                        type="text"
+                        value={address.street}
+                        onChange={handleAddressChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    City:
+                    <input
+                        name="city"
+                        type="text"
+                        value={address.city}
+                        onChange={handleAddressChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    State:
+                    <input
+                        name="state"
+                        type="text"
+                        value={address.state}
+                        onChange={handleAddressChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    Postal Code:
+                    <input
+                        name="postalCode"
+                        type="text"
+                        value={address.postalCode}
+                        onChange={handleAddressChange}
+                        required
+                    />
+                </label>
+                <br/>
+                <label>
+                    Country:
+                    <input
+                        name="country"
+                        type="text"
+                        value={address.country}
+                        onChange={handleAddressChange}
+                        required
+                    />
+                </label>
+                <br/>
                 <div>
                     <h3>Rating</h3>
                     {[1, 2, 3, 4, 5].map(star => (
@@ -242,7 +357,9 @@ const ReviewDetails = () => {
 
     return (
         <div>
-            <Link to={`/`}><button>Back to home</button></Link>
+            <Link to={`/`}>
+                <button>Back to home</button>
+            </Link>
             <h1>Review Details</h1>
             <h3>Reviewer: {review.reviewerName}</h3>
             <p>{Array(review.rating).fill('★').join('')} ({review.rating}/5)</p>
