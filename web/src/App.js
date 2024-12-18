@@ -121,24 +121,36 @@ const GameDetails = () => {
 
 const WriteReview = () => {
     const {name} = useParams();
+    const [username, setUsername] = useState("");
     const [rating, setRating] = useState(0);
     const [reviewContent, setReviewContent] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [isUserExists, setIsUserExists] = useState(true);
 
+    const checkUsername  = async () => {
+        const usernameUrl = `http://localhost:8083/users/`;
+        const response = await axios.get(url);
+        const users = response.data;
+        const exists = users.some((user ) =>  user.name === username);
+        setIsUserExists(exists)
+        return exists
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!reviewContent || !rating) {
             return;
         }
+
         const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews`;
         const payload = {
-            reviewerName: "Anonymous",
+            reviewerName: username,
             reviewContent: reviewContent,
             rating: rating
 
         };
+
 
         axios.post(url, payload)
             .then((response) => {
@@ -150,10 +162,20 @@ const WriteReview = () => {
 
             });
     };
-
+    const handleName = (e) => {
+        setUsername(e.target.value);
+    };
     return (
         <div>
             <h1>Write a Review for {name}</h1>
+            {!isUserExists? (
+                    <a href="http://localhost:8083/website/users/create" target="_blank" rel="noopener noreferrer">
+                        Go to JSP Application
+                    </a>
+
+                ) :
+                <input type="text" value={username} onChange={handleName} placeholder="Enter your name" />
+            }
             {error && <p style={{color: 'red'}}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
