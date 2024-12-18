@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState} from "react";
 import axios from 'axios';
@@ -65,18 +64,18 @@ const GameDetails = () => {
     }, [name]);
 
     const handleVote = (reviewId, voteType) => {
-        axios.post(`http://localhost:8081/reviews/${reviewId}/vote`, { 
-            voterName: 'Anonymous', 
-            voteType: voteType 
+        axios.post(`http://localhost:8081/reviews/${reviewId}/vote`, {
+            voterName: 'Anonymous',
+            voteType: voteType
         })
-        .then(response => {
-            setReviews(prevReviews => prevReviews.map(review => 
-                review.id === reviewId ? {...review, voteCount: response.data.voteCount} : review
-            ));
-        })
-        .catch(error => {
-            console.error("Could not register vote!", error);
-        });
+            .then(response => {
+                setReviews(prevReviews => prevReviews.map(review =>
+                    review.id === reviewId ? {...review, voteCount: response.data.voteCount} : review
+                ));
+            })
+            .catch(error => {
+                console.error("Could not register vote!", error);
+            });
     };
 
     if (error) {
@@ -96,26 +95,26 @@ const GameDetails = () => {
 
             <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link>
 
-        
+
             <h2>Reviews</h2>
-        {reviews.length === 0 ? (
-            <p>No reviews yet for this game.</p>
-        ) : (
-            <ul>
-                {reviews.map((review) => (
-                    <li key={review.id} style={{marginBottom: '10px'}}>
-                        <Link to={`/game/${name}/review/${review.id}`}>
-                            <strong>{review.reviewerName}</strong> - 
-                            {Array(review.rating).fill('★').join('')} 
-                            ({review.rating}/5)
-                        </Link>
-                        <button onClick={() => handleVote(review.id, 'UPVOTE')}>👍</button>
-                        <button onClick={() => handleVote(review.id, 'DOWNVOTE')}>👎</button>
-                        <span>Votes: {review.voteCount || 0}</span>
-                    </li>
-                ))}
-            </ul>
-        )}
+            {reviews.length === 0 ? (
+                <p>No reviews yet for this game.</p>
+            ) : (
+                <ul>
+                    {reviews.map((review) => (
+                        <li key={review.id} style={{marginBottom: '10px'}}>
+                            <Link to={`/game/${name}/review/${review.id}`}>
+                                <strong>{review.reviewerName}</strong> -
+                                {Array(review.rating).fill('★').join('')}
+                                ({review.rating}/5)
+                            </Link>
+                            <button onClick={() => handleVote(review.id, 'UPVOTE')}>👍</button>
+                            <button onClick={() => handleVote(review.id, 'DOWNVOTE')}>👎</button>
+                            <span>Votes: {review.voteCount || 0}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
 
         </>
     )
@@ -128,16 +127,9 @@ const WriteReview = () => {
     const [reviewContent, setReviewContent] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [isUserExists, setIsUserExists] = useState(true);
 
-    const checkUsername  = async () => {
-        const usernameUrl = `http://localhost:8083/users/`;
-        const response = await axios.get(url);
-        const users = response.data;
-        const exists = users.some((user ) =>  user.name === username);
-        setIsUserExists(exists)
-        return exists
-    }
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -171,14 +163,13 @@ const WriteReview = () => {
         <div>
             <Link to={`/`}><button>Back to home</button></Link>
             <h1>Write a Review for {name}</h1>
-            {!isUserExists? (
-                    <a href="http://localhost:8083/website/users/create" target="_blank" rel="noopener noreferrer">
-                        Go to JSP Application
-                    </a>
 
-                ) :
-                <input type="text" value={username} onChange={handleName} placeholder="Enter your name" />
-            }
+            <a href="http://localhost:8083/website/users/create" target="_blank" rel="noopener noreferrer">
+                Register User:
+            </a>
+            <br/>
+            <input type="text" value={username} onChange={handleName} placeholder="Enter your name" />
+
             {error && <p style={{color: 'red'}}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
@@ -220,18 +211,18 @@ const ReviewDetails = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-            const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews/${reviewId}`;
-            console.log(`Requesting Review from: ${url}`);
+        const url = `http://localhost:8081/game/${encodeURIComponent(name)}/reviews/${reviewId}`;
+        console.log(`Requesting Review from: ${url}`);
 
-            axios.get(url)
-                .then(response => {
-                    setReview(response.data);
-                })
-                .catch(error => {
-                    console.error("Could not fetch review details!", error);
-                    setError("Review not found!");
-                });
-        }, [name, reviewId]);
+        axios.get(url)
+            .then(response => {
+                setReview(response.data);
+            })
+            .catch(error => {
+                console.error("Could not fetch review details!", error);
+                setError("Review not found!");
+            });
+    }, [name, reviewId]);
 
     if (error) {
         return <h2>{error}</h2>;
