@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import se.yrgo.data.ReviewRepository;
 import se.yrgo.data.VoteRepository;
+import se.yrgo.domain.Game;
 import se.yrgo.domain.Review;
 
 import java.util.List;
@@ -65,6 +66,12 @@ public class ReviewRestController {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @RequestMapping(value = "/reviews", method = RequestMethod.GET)
+    public ReviewList allGames(){
+        List<Review> reviews = reviewRepository.findAll();
+        return new ReviewList(reviews);
+    }
 
     @RequestMapping(value = "/game/{name}/reviews", method = RequestMethod.POST)
     public ResponseEntity<?> createReview(@PathVariable("name") String name, @RequestBody Review review) {

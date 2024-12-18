@@ -19,28 +19,43 @@ const App = () => {
     }, []);
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={
-                    <div>
-                        <h1>Games List</h1>
-                        <ul>
-                            {games.map(game => (
-                                <div key={game.id}>
-                                    <Link to={`/game/${game.name}`}><h2> {game.name}</h2> </Link>
-                                </div>
-                            ))}
-                        </ul>
-                    </div>
-                }
-                />
-                <Route path="/game/:name" element={<GameDetails/>}></Route>
-                <Route path="/game/:name/write-review" element={<WriteReview/>}></Route>
-                <Route path="/game/:name/review/:reviewId" element={<ReviewDetails/>}/>
-            </Routes>
-        </BrowserRouter>
-    );
-};
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={
+                        <div>
+                            <h1>Games List</h1>
+                            <ul>
+                                {games.map(game => (
+                                    <div key={game.id}>
+                                        <Link to={`/game/${game.name}`}><h2> {game.name}</h2> </Link>
+                                    </div>
+                                ))}
+                            </ul>
+
+                            <div style={{
+                                position: 'fixed',
+                                bottom: '10px',
+                                left: '10px',
+                                padding: '10px',
+                            }}>
+                                <h4>Quick Links</h4>
+                                <ul style={{listStyleType: 'none', padding: 0}}>
+                                    <li><a href="http://localhost:8080/games" target="_blank" rel="noopener noreferrer">http://localhost:8080/games</a></li>
+                                    <li><a href="http://localhost:8081/reviews" target="_blank" rel="noopener noreferrer">http://localhost:8081/reviews</a></li>
+                                    <li><a href="http://localhost:8083/users" target="_blank" rel="noopener noreferrer">http://localhost:8083/users</a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    }
+                    />
+                    <Route path="/game/:name" element={<GameDetails/>}></Route>
+                    <Route path="/game/:name/write-review" element={<WriteReview/>}></Route>
+                    <Route path="/game/:name/review/:reviewId" element={<ReviewDetails/>}/>
+                </Routes>
+            </BrowserRouter>
+        );
+    };
 
 const GameDetails = () => {
     const {name} = useParams();
