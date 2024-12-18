@@ -2,7 +2,9 @@ import './App.css';
 import {useEffect, useState} from "react";
 import axios from 'axios';
 import {Link, Route, BrowserRouter, Routes, useParams, useNavigate} from "react-router-dom";
-
+import barbie from './BARBIE.png';
+import poe from './POE2.png';
+import slither from './SLITHER.png';
 const App = () => {
     const [games, setGames] = useState([]);
 
@@ -92,7 +94,13 @@ const GameDetails = () => {
             <p> {game.genre}</p>
             <p>Publisher: {game.publisher.name}, {game.publisher.country}</p>
             <p>${game.price}</p>
-
+            {game.name === "Barbie and the Magic of Pegasus" ? (
+                <img src={barbie} alt="Barbie" />
+            ): game.name === "Path of Exile 2" ? (
+                <img src={poe} alt="POE2" />
+                ): (<img src={slither} alt="Slither" />
+            )}
+            <br/>
             <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link>
 
 
