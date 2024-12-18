@@ -87,6 +87,8 @@ const GameDetails = () => {
     }
     return (
         <>
+            <Link to={`/`}><button>Back to home</button></Link>
+
             <h1>{game.name}</h1>
             <p> {game.genre}</p>
             <p>Publisher: {game.publisher.name}, {game.publisher.country}</p>
@@ -153,6 +155,7 @@ const WriteReview = () => {
 
     return (
         <div>
+            <Link to={`/`}><button>Back to home</button></Link>
             <h1>Write a Review for {name}</h1>
             {error && <p style={{color: 'red'}}>{error}</p>}
             <form onSubmit={handleSubmit}>
@@ -218,6 +221,7 @@ const ReviewDetails = () => {
 
     return (
         <div>
+            <Link to={`/`}><button>Back to home</button></Link>
             <h1>Review Details</h1>
             <h3>Reviewer: {review.reviewerName}</h3>
             <p>{Array(review.rating).fill('★').join('')} ({review.rating}/5)</p>
