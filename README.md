@@ -4,3 +4,5 @@ Kör main metoden i alla mikrotjänster:
 3. UserProjectApplication i User/src/main/java/se/yrgo
 
 Gå sedan in i web foldern och kör npm install och npm start
+
+Alla backendtjänster är kopplade till frontend.
