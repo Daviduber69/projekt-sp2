@@ -18,6 +18,60 @@ const App = () => {
             })
     }, []);
 
+
+    const [addPublisher, setAddPublisher] = useState({
+        name: "",
+        country: ""
+    });
+    const [addGame, setAddGame] = useState({
+        name: "",
+        genre: "",
+        price: 0,
+        publisherId: null
+    });
+
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const gamesUrl = 'http://localhost:8080/games';
+    const publisherUrl = 'http://localhost:8080/publisher'
+
+
+        const handleAddGame = async(e) => {
+            e.preventDefault()
+            try {
+                const publisherResp = await axios.post(publisherUrl, addPublisher);
+
+                if (!publisherResp.data) {
+                    throw new Error("Failed to retrieve publisher ID from response.");
+                }
+                const publisher = publisherResp.data;
+                const newGame = {
+                    ...addGame,
+                    publisher
+                };
+                const gameResp = await axios.post(gamesUrl, newGame);
+
+                setGames((prevGames) => [...prevGames, gameResp.data]);
+                setSuccessMessage("Successfully added game!");
+                setAddPublisher({ name: "", country: "" });
+                setAddGame({ name: "", genre: "", price: 0, publisherId: null });
+            }catch (error) {
+                console.error("Error adding game or publisher: ", error);
+            }
+        }
+    const handleGameChange = (e) => {
+        setAddGame((prev) =>( {
+            ...prev,
+            [e.target.name]: e.target.value
+        }))
+    };
+    const handlePublisherChange = (e) => {
+        setAddPublisher((prev) =>( {
+            ...prev,
+            [e.target.name]: e.target.value
+        }))
+    };
+
     return (
             <BrowserRouter>
                 <Routes>
@@ -38,11 +92,35 @@ const App = () => {
                                 left: '10px',
                                 padding: '10px',
                             }}>
+                                <form onSubmit={handleAddGame}>
+                                    <h2>ADD NEW GAMES BELOW: </h2>
+                                    <input type="text" name="name" value={addPublisher.name} onChange={handlePublisherChange}
+                                           placeholder="Publisher name: "/>
+                                    <br/>
+                                    <input type="text" name="country" value={addPublisher.country} onChange={handlePublisherChange}
+                                           placeholder="Publisher country: "/>
+                                    <br/>
+                                    <input type="text" name="name" value={addGame.name} onChange={handleGameChange}
+                                           placeholder="Game name: "/>
+                                    <br/>
+                                    <input type="text" name="genre" value={addGame.genre} onChange={handleGameChange}
+                                           placeholder="Game genre: "/>
+                                    <br/>
+                                    <input type="text" name="price" value={addGame.price} onChange={handleGameChange}
+                                           placeholder="Game price: "/>
+                                    <br/>
+                                    <button type="submit">Submit Game</button>
+                                </form>
+                                {successMessage && <h3>{successMessage}</h3> }
+
                                 <h4>Quick Links</h4>
                                 <ul style={{listStyleType: 'none', padding: 0}}>
-                                    <li><a href="http://localhost:8080/games" target="_blank" rel="noopener noreferrer">http://localhost:8080/games</a></li>
-                                    <li><a href="http://localhost:8081/reviews" target="_blank" rel="noopener noreferrer">http://localhost:8081/reviews</a></li>
-                                    <li><a href="http://localhost:8083/users" target="_blank" rel="noopener noreferrer">http://localhost:8083/users</a></li>
+                                    <li><a href="http://localhost:8080/games" target="_blank"
+                                           rel="noopener noreferrer">http://localhost:8080/games</a></li>
+                                    <li><a href="http://localhost:8081/reviews" target="_blank"
+                                           rel="noopener noreferrer">http://localhost:8081/reviews</a></li>
+                                    <li><a href="http://localhost:8083/users" target="_blank"
+                                           rel="noopener noreferrer">http://localhost:8083/users</a></li>
                                 </ul>
                             </div>
 
@@ -56,6 +134,8 @@ const App = () => {
             </BrowserRouter>
         );
     };
+
+
 
 const GameDetails = () => {
     const {name} = useParams();
@@ -113,8 +193,11 @@ const GameDetails = () => {
                 <img src={barbie} alt="Barbie" />
             ): game.name === "Path of Exile 2" ? (
                 <img src={poe} alt="POE2" />
-                ): (<img src={slither} alt="Slither" />
-            )}
+                ) : game.name === "Slither.io" ? (
+                    <img src={slither} alt="Slither" />
+            ): null
+
+            }
             <br/>
             <Link to={`/game/${game.name}/write-review`}><button>Write Review</button></Link>
 
